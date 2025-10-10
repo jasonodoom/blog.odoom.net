@@ -1,0 +1,238 @@
+/* Blog title hover effect - glitch/cyberpunk style */
+header .text-2xl {
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+header .text-2xl:hover {
+  animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both;
+  text-shadow:
+    2px 2px 0 #3b82f6,
+    -2px -2px 0 #ef4444,
+    0 0 20px rgba(59, 130, 246, 0.5);
+  transform: scale(1.05);
+}
+
+/* Mobile: make Musings title clickable and add subtle glow */
+@media (max-width: 768px) {
+  header .text-2xl {
+    text-shadow: 0 0 4px rgba(59, 130, 246, 0.3);
+    cursor: pointer;
+  }
+
+  header .text-2xl:active {
+    animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both;
+    text-shadow:
+      2px 2px 0 #3b82f6,
+      -2px -2px 0 #ef4444,
+      0 0 20px rgba(59, 130, 246, 0.5);
+    transform: scale(1.05);
+  }
+
+  /* Dark mode toggle - slider on mobile */
+  header .btn-dark {
+    width: 60px !important;
+    height: 32px !important;
+    margin-left: 1rem !important;
+    margin-right: 0 !important;
+    background: none !important;
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .dark-mode-slider {
+    display: flex !important;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .slider-track {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    transition: background 0.3s ease;
+  }
+
+  .dark .slider-track {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .slider-thumb {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background: #fff;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slider-thumb::after {
+    content: '☀️';
+    font-size: 14px;
+  }
+
+  .dark .slider-thumb {
+    background: #000;
+    left: 31px;
+  }
+
+  .dark .slider-thumb::after {
+    content: '🌙';
+  }
+
+  /* Hide slider on desktop */
+  @media (min-width: 769px) {
+    .dark-mode-slider {
+      display: none !important;
+    }
+
+    header .btn-dark {
+      background: url(./theme.png) left center / auto 1.5rem no-repeat !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+    }
+  }
+}
+
+/* Modern Home link styling */
+nav a[href="/"] {
+  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dark nav a[href="/"] {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+nav a[href="/"]:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.dark nav a[href="/"]:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.home-icon {
+  font-size: 1.1em;
+}
+
+/* Mobile Home link styling */
+@media (max-width: 768px) {
+  header nav.ml-12 {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
+  nav a[href="/"] {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.875rem;
+    gap: 0.35rem;
+    min-width: 48px;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  .home-text {
+    display: none;
+  }
+
+  .home-icon {
+    font-size: 2em;
+  }
+}
+
+@keyframes glitch {
+  0%, 100% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* Back to Posts animation */
+.back-to-posts {
+  transition: transform 0.3s ease;
+}
+
+.back-to-posts:hover {
+  transform: translateX(-4px);
+}
+
+/* Custom selection highlighting */
+footer a[href^="mailto"]::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+footer a[href^="mailto"] *::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Email hover glow */
+footer a[href^="mailto"] {
+  transition: text-shadow 0.3s ease;
+}
+
+footer a[href^="mailto"]:hover {
+  text-shadow: 0 0 8px #3b82f6, 0 0 16px #3b82f6;
+}
+
+/* Post title selection */
+h1::selection,
+article header h1::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+h1 *::selection,
+article header h1 *::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Post title hover glow */
+article header h1,
+.post-title,
+section h2 {
+  transition: text-shadow 0.3s ease;
+  cursor: default;
+}
+
+article header h1:hover,
+.post-title:hover,
+section:hover h2 {
+  text-shadow: 0 0 8px #3b82f6, 0 0 16px #3b82f6;
+}

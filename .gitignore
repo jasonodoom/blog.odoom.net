@@ -1,0 +1,22 @@
+# Ghost exports (contain sensitive keys)
+exports/
+*.ghost.*.json
+
+# Hugo
+hugo-site/public/
+hugo-site/resources/
+hugo-site/.hugo_build.lock
+
+# Nix
+result
+.direnv
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

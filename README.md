@@ -1,4 +1,3 @@
-# blog.odoom.net theme
+# odoom.net
 
-Slightly modified [1.6.0 Vapor](https://github.com/sethlilly/Vapor/tree/v1.6.0).
-
+Built with [Hugo](https://gohugo.io) and [Nix](https://nixos.org), migrated from [Ghost](https://ghost.org).

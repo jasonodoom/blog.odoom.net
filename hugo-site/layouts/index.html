@@ -1,0 +1,717 @@
+{{- define "main" -}}
+<style>
+  /* Override default prose styling for homepage */
+  main.prose {
+    max-width: 1000px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    padding-top: calc(2rem * 1.618);
+    padding-bottom: calc(2rem * 1.618);
+    margin: 0 auto !important;
+  }
+
+  /* Standalone dark mode toggle slider on homepage */
+  .dark-mode-toggle {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 32px;
+    z-index: 1000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .slider-track {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    transition: background 0.3s ease;
+    position: relative;
+  }
+
+  .dark .slider-track {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .slider-thumb {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background: #fff;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slider-thumb::after {
+    content: '☀️';
+    font-size: 14px;
+  }
+
+  .dark .slider-thumb {
+    background: #000;
+    left: 31px;
+  }
+
+  .dark .slider-thumb::after {
+    content: '🌙';
+  }
+
+  /* Card flip container */
+  .card-container {
+    perspective: 1000px;
+    width: 100%;
+    max-width: 680px;
+    aspect-ratio: 1.75 / 1;
+  }
+
+  .card-flipper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+  }
+
+  .card-container:hover .card-flipper:not(.flipped) {
+    transform: scale(1.02);
+  }
+
+  .card-container.flipped .card-flipper {
+    transform: rotateY(180deg);
+  }
+
+  .card-container.flipped:hover .card-flipper {
+    transform: rotateY(180deg) scale(1.02);
+  }
+
+  .business-card,
+  .business-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    padding: 2.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  .business-card {
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.618fr 1fr;
+    gap: 2.5rem;
+    transform: rotateY(0deg);
+  }
+
+  .business-card-back {
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .dark .business-card,
+  .dark .business-card-back {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Back of card styles */
+  .card-back-content {
+    text-align: center;
+    width: 100%;
+  }
+
+  .card-back-email {
+    font-size: 1.125rem;
+    color: #222;
+    text-decoration: none;
+    margin-bottom: 2rem;
+    display: block;
+    transition: color 0.2s ease;
+  }
+
+  .dark .card-back-email {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .card-back-email:hover {
+    color: #3b82f6;
+  }
+
+  .card-back-pgp {
+    font-size: 0.9rem;
+    color: #666;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    letter-spacing: 0.1em;
+  }
+
+  .dark .card-back-pgp {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .card-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .card-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 2rem;
+  }
+
+  .dark .card-right {
+    border-left-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .business-card h1 {
+    font-size: 1.75rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+    letter-spacing: 0.02em;
+    color: #000;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  /* Desktop only: metallic foil shine effect on name */
+  @media (min-width: 769px) {
+    .business-card h1 {
+      background: linear-gradient(110deg, #000 30%, #666 38%, #fff 40%, #eee 48%, #000 58%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: foilShine 5s ease-in-out infinite;
+    }
+
+    .dark .business-card h1 {
+      background: linear-gradient(110deg, #fff 30%, #ccc 38%, #fff 40%, #f5f5f5 48%, #fff 58%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes foilShine {
+      0% {
+        background-position: -100% 0;
+      }
+      20% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+  }
+
+  .dark .business-card h1 {
+    color: #fff;
+  }
+
+  .tagline {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    margin-bottom: 1.25rem;
+    font-weight: 400;
+    color: #444;
+  }
+
+  .dark .tagline {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .bio {
+    opacity: 0.85;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .dark .bio {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .bio p {
+    margin: 0;
+  }
+
+  .links {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .link-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 2px;
+    text-decoration: none;
+    color: #222;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.875rem;
+    font-weight: 450;
+  }
+
+  .dark .link-item {
+    border-color: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .link-item:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+    transform: translateX(2px);
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .link-item:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Focus states for keyboard navigation */
+  .link-item:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  .link-icon {
+    font-size: 1rem;
+    width: 1.5rem;
+    text-align: center;
+  }
+
+  .link-text {
+    flex: 1;
+    font-weight: 400;
+  }
+
+  .link-arrow {
+    opacity: 0.4;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .link-item:hover .link-arrow {
+    opacity: 0.8;
+    transform: translateX(2px);
+  }
+
+  /* Business card motto/tagline footer */
+  .card-motto {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 2.5rem;
+    right: 2.5rem;
+    text-align: center;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: transparent;
+    background: linear-gradient(135deg, #C5A572 0%, #F4E4C1 25%, #C5A572 50%, #8B7355 75%, #C5A572 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    opacity: 0.9;
+  }
+
+  .dark .card-motto {
+    background: linear-gradient(135deg, #D4AF37 0%, #FFD700 25%, #D4AF37 50%, #B8860B 75%, #D4AF37 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.95;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 0% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+
+  /* Hide footer and menu on homepage */
+  footer {
+    display: none !important;
+  }
+
+  .btn-menu {
+    display: none !important;
+  }
+
+  /* Hide header on homepage */
+  header {
+    display: none !important;
+  }
+
+  /* Hide flip hint on desktop */
+  .flip-hint {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    main.prose {
+      padding: 5vh 1rem !important;
+      height: 100vh !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      overflow-y: auto;
+    }
+
+    .dark-mode-toggle {
+      top: 1rem;
+      right: 1rem;
+    }
+
+    /* Show flip hint on mobile */
+    .flip-hint {
+      display: block;
+    }
+
+    .card-container {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      aspect-ratio: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .card-flipper {
+      width: 100%;
+      position: relative;
+      transform-origin: center center;
+      min-height: 550px;
+    }
+
+    .card-flipper::after {
+      content: '';
+      display: block;
+      padding-bottom: 0;
+    }
+
+    .business-card,
+    .business-card-back {
+      padding: 2rem 1.5rem 3rem 1.5rem;
+      border-radius: 16px;
+      min-height: 550px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.08);
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.015) 0px,
+          rgba(0, 0, 0, 0.015) 1px,
+          transparent 1px,
+          transparent 2px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.015) 0px,
+          rgba(0, 0, 0, 0.015) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+      background-color: white;
+    }
+
+    .dark .business-card,
+    .dark .business-card-back {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.015) 0px,
+          rgba(255, 255, 255, 0.015) 1px,
+          transparent 1px,
+          transparent 2px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.015) 0px,
+          rgba(255, 255, 255, 0.015) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+    }
+
+    .business-card {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .business-card-back {
+      justify-content: center;
+    }
+
+    .card-left {
+      padding-bottom: 1rem;
+    }
+
+    .card-right {
+      border-left: none;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      padding-left: 0;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .dark .card-right {
+      border-top-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .business-card h1 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .bio {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .bio p {
+      margin: 0;
+    }
+
+    .links {
+      gap: 0.875rem;
+    }
+
+    .link-item {
+      font-size: 0.9rem;
+      padding: 0.75rem 1rem;
+    }
+
+    .link-icon {
+      font-size: 1.1rem;
+    }
+
+    .card-motto {
+      bottom: 0.875rem;
+      font-size: 0.5rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      letter-spacing: 0.12em;
+    }
+
+    .card-back-content {
+      padding: 1rem 0;
+    }
+
+    .card-back-email {
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+
+    .card-back-pgp {
+      font-size: 0.875rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* Tap to flip hint on mobile */
+    .flip-hint {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      animation: fadeInOut 3s ease-in-out forwards;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .dark .flip-hint {
+      color: rgba(255, 255, 255, 0.5);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+
+    .flip-hint.hidden {
+      display: none;
+    }
+  }
+</style>
+
+<!-- Standalone dark mode toggle -->
+<div class="dark-mode-toggle" onclick="toggleDarkMode()">
+  <div class="slider-track">
+    <div class="slider-thumb"></div>
+  </div>
+</div>
+
+<script>
+  function toggleDarkMode() {
+    const htmlClass = document.documentElement.classList;
+    const isDark = htmlClass.contains('dark');
+
+    if (isDark) {
+      htmlClass.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
+      localStorage.setItem('dark', 'false');
+    } else {
+      htmlClass.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
+      localStorage.setItem('dark', 'true');
+    }
+  }
+
+  // Initialize based on system preference or user's saved preference
+  (function() {
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const darkVal = localStorage.getItem('dark');
+
+    // Use saved preference if exists, otherwise use system preference
+    const isDark = darkVal !== null ? darkVal === 'true' : darkScheme.matches;
+
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
+    }
+  })();
+
+  // Flip card function with hint removal
+  function flipCard(container) {
+    container.classList.toggle('flipped');
+
+    // Hide hint after first flip
+    const hint = document.getElementById('flipHint');
+    if (hint && !hint.classList.contains('hidden')) {
+      setTimeout(() => {
+        hint.classList.add('hidden');
+      }, 500);
+    }
+  }
+
+  // Hide hint on mobile after animation completes
+  if (window.innerWidth <= 768) {
+    setTimeout(() => {
+      const hint = document.getElementById('flipHint');
+      if (hint) {
+        hint.classList.add('hidden');
+      }
+    }, 3500);
+  }
+</script>
+
+<div class="flip-hint" id="flipHint">Tap to flip</div>
+
+<div class="card-container" onclick="flipCard(this)">
+  <div class="card-flipper">
+    <!-- Front of card -->
+    <div class="business-card">
+      <div class="card-left">
+        <h1>Jason Odoom</h1>
+        <p class="tagline">Engineer • Writer • Thinker</p>
+        <div class="bio">
+          <p>Building secure systems and exploring the intersection of technology, privacy and society. Passionate about infrastructure security, code that matters and digital freedom.</p>
+        </div>
+      </div>
+
+      <div class="card-right">
+        <div class="links">
+          <a href="/post/" class="link-item" onclick="event.stopPropagation()">
+            <span class="link-icon">✍🏿</span>
+            <span class="link-text">Blog</span>
+            <span class="link-arrow">→</span>
+          </a>
+          <a href="https://github.com/jasonodoom" class="link-item" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+            <span class="link-icon">💻</span>
+            <span class="link-text">GitHub</span>
+            <span class="link-arrow">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="card-motto">Create. Dismantle. Rebuild.</div>
+    </div>
+
+    <!-- Back of card -->
+    <div class="business-card-back">
+      <div class="card-back-content">
+        <a href="mailto:me@odoom.net" class="card-back-email" onclick="event.stopPropagation()">me@odoom.net</a>
+        <div class="card-back-pgp">68CC AF80 768A 91A5</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{- end -}}

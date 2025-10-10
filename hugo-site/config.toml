@@ -1,0 +1,18 @@
+baseURL = "https://blog.odoom.net/"
+disablePathToLower = true
+languageCode = "en-us"
+title = "Musings"
+theme = "paper"
+
+[params]
+  color = "linen"
+  description = "Technical and untechnical musings"
+  favicon = "favicon.svg"
+
+
+[markup]
+  [markup.highlight]
+    style = "monokailight"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
