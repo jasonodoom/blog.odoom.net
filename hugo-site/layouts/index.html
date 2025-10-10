@@ -631,13 +631,12 @@
     }
   }
 
-  // Initialize based on system preference or user's saved preference
+  // Initialize based on user's saved preference, default to light mode
   (function() {
-    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
     const darkVal = localStorage.getItem('dark');
 
-    // Use saved preference if exists, otherwise use system preference
-    const isDark = darkVal !== null ? darkVal === 'true' : darkScheme.matches;
+    // Use saved preference if exists, otherwise default to light mode
+    const isDark = darkVal !== null ? darkVal === 'true' : false;
 
     if (isDark) {
       document.documentElement.classList.add('dark');
@@ -712,11 +711,11 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Hint for terminal users -->
-  <div style="text-align: center; margin-top: 2rem; opacity: 0.4; font-size: 0.75rem; font-family: monospace;">
-    Try: <code style="background: rgba(0,0,0,0.05); padding: 0.2rem 0.5rem; border-radius: 3px;">curl https://odoom.net</code>
-  </div>
+<!-- Hint for terminal users -->
+<div style="text-align: center; margin-top: 2rem; opacity: 0.4; font-size: 0.75rem; font-family: monospace;">
+  Try: <code style="background: rgba(0,0,0,0.05); padding: 0.2rem 0.5rem; border-radius: 3px;">curl https://odoom.net</code>
 </div>
 
 {{- end -}}

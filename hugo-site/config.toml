@@ -1,7 +1,7 @@
 baseURL = "https://blog.odoom.net/"
 disablePathToLower = true
 languageCode = "en-us"
-title = "Musings"
+title = "Jason Odoom"
 theme = "paper"
 
 [params]
