@@ -6,18 +6,19 @@
 ║                 Engineer • Writer • Thinker                      ║
 ║                                                                  ║
 ║  Building secure systems and exploring the intersection of       ║
-║  technology, privacy and society. Passionate about               ║
-║  infrastructure security, code that matters and digital freedom. ║
+║  technology, privacy and society.                                ║
+║  Passionate about infrastructure security, code that matters     ║
+║  and digital freedom.                                            ║
 ║                                                                  ║
 ║  ──────────────────────────────────────────────────────────────  ║
 ║                                                                  ║
-║  Blog      → https://blog.odoom.net/post/                        ║
+║  Blog      → https://blog.odoom.net                              ║
 ║  GitHub    → https://github.com/jasonodoom                       ║
 ║                                                                  ║
 ║  ──────────────────────────────────────────────────────────────  ║
 ║                                                                  ║
 ║  Email: me@odoom.net                                             ║
-║  PGP:   68CC AF80 768A 91A5                                      ║
+║  PGP: 68CC AF80 768A 91A5                                        ║
 ║                                                                  ║
 ║              Create. Dismantle. Rebuild.                         ║
 ║                                                                  ║
