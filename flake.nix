@@ -23,13 +23,18 @@
             echo ""
 
             # Clone Paper theme if not exists
-            if [ -d "hugo-site" ] && [ ! -d "hugo-site/themes/paper/.git" ]; then
+            if [ -f "config.toml" ] && [ ! -d "themes/paper/.git" ]; then
+              mkdir -p themes
+              git clone https://github.com/nanxiaobei/hugo-paper.git themes/paper
+            elif [ -d "hugo-site" ] && [ ! -d "hugo-site/themes/paper/.git" ]; then
               mkdir -p hugo-site/themes
               git clone https://github.com/nanxiaobei/hugo-paper.git hugo-site/themes/paper
             fi
 
             # Auto-start hugo server
-            if [ -d "hugo-site" ]; then
+            if [ -f "config.toml" ]; then
+              hugo server
+            elif [ -d "hugo-site" ]; then
               cd hugo-site && hugo server
             fi
           '';
