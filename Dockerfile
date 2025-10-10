@@ -1,5 +1,5 @@
 # build stage
-FROM klakegg/hugo:0.151.0-alpine AS builder
+FROM hugomods/hugo:exts-non-root AS builder
 
 WORKDIR /app
 COPY hugo-site /app
