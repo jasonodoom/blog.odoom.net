@@ -1,5 +1,5 @@
 # build stage
-FROM hugomods/hugo:exts-non-root AS builder
+FROM hugomods/hugo:exts AS builder
 
 WORKDIR /app
 COPY hugo-site /app
