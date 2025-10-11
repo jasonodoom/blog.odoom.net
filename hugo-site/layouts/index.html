@@ -1,4 +1,39 @@
 {{- define "main" -}}
+<script>
+  // Initialize dark mode ASAP to prevent flash
+  (function() {
+    // Check URL parameter first (for cross-domain navigation)
+    const urlParams = new URLSearchParams(window.location.search);
+    const darkParam = urlParams.get('dark');
+
+    let isDark;
+    if (darkParam === '1') {
+      isDark = true;
+      localStorage.setItem('dark', 'true');
+    } else if (darkParam === '0') {
+      isDark = false;
+      localStorage.setItem('dark', 'false');
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      isDark = darkVal !== null ? darkVal === 'true' : false;
+    }
+
+    // Clean up URL parameter
+    if (darkParam && window.history.replaceState) {
+      const url = new URL(window.location);
+      url.searchParams.delete('dark');
+      window.history.replaceState({}, '', url);
+    }
+
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
+    }
+  })();
+</script>
 <style>
   /* Override default prose styling for homepage */
   main.prose {
@@ -91,10 +126,12 @@
 
   .card-container.flipped .card-flipper {
     transform: rotateY(180deg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 16px 48px rgba(0, 0, 0, 0.1);
   }
 
   .card-container.flipped:hover .card-flipper {
     transform: rotateY(180deg) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), 0 20px 56px rgba(0, 0, 0, 0.12);
   }
 
   .business-card,
@@ -109,6 +146,23 @@
     border-radius: 4px;
     padding: 2.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.03);
+    /* Subtle paper texture */
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.015) 0px,
+        rgba(0, 0, 0, 0.015) 1px,
+        transparent 1px,
+        transparent 2px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.015) 0px,
+        rgba(0, 0, 0, 0.015) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+    background-color: white;
   }
 
   .business-card {
@@ -133,6 +187,21 @@
     background: rgba(255, 255, 255, 0.02);
     border-color: rgba(255, 255, 255, 0.08);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.015) 0px,
+        rgba(255, 255, 255, 0.015) 1px,
+        transparent 1px,
+        transparent 2px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.015) 0px,
+        rgba(255, 255, 255, 0.015) 1px,
+        transparent 1px,
+        transparent 2px
+      );
   }
 
   /* Back of card styles */
@@ -288,14 +357,16 @@
   }
 
   .link-item:hover {
-    border-color: rgba(0, 0, 0, 0.3);
-    transform: translateX(2px);
-    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: translateX(3px) translateY(-1px);
+    background: rgba(59, 130, 246, 0.08);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
   }
 
   .dark .link-item:hover {
-    border-color: rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.12);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   }
 
   /* Focus states for keyboard navigation */
@@ -382,6 +453,45 @@
   /* Hide flip hint on desktop */
   .flip-hint {
     display: none;
+  }
+
+  /* Easter egg: torn card halves */
+  .card-half {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    top: 0;
+    overflow: hidden;
+    transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+  }
+
+  .card-half-left {
+    left: 0;
+    clip-path: polygon(0 0, 47% 0, 53% 20%, 48% 40%, 52% 60%, 47% 80%, 50% 100%, 0 100%);
+  }
+
+  .card-half-right {
+    right: 0;
+    clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%, 47% 80%, 52% 60%, 48% 40%, 53% 20%);
+  }
+
+  .card-half .card-flipper {
+    transform: none !important;
+    position: relative;
+  }
+
+  .card-half-left .card-flipper {
+    left: 0;
+  }
+
+  .card-half-right .card-flipper {
+    right: 0;
+    position: absolute;
+  }
+
+  .card-container.torn {
+    pointer-events: none;
   }
 
   @media (max-width: 768px) {
@@ -631,25 +741,16 @@
     }
   }
 
-  // Initialize based on user's saved preference, default to light mode
-  (function() {
-    const darkVal = localStorage.getItem('dark');
-
-    // Use saved preference if exists, otherwise default to light mode
-    const isDark = darkVal !== null ? darkVal === 'true' : false;
-
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      document.documentElement.style.colorScheme = 'dark';
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.style.colorScheme = 'light';
-    }
-  })();
-
-  // Flip card function with hint removal
+  // Flip card function with hint removal and easter egg
+  let flipCount = 0;
   function flipCard(container) {
+    // Check if already torn
+    if (container.classList.contains('torn')) {
+      return;
+    }
+
     container.classList.toggle('flipped');
+    flipCount++;
 
     // Hide hint after first flip
     const hint = document.getElementById('flipHint');
@@ -658,6 +759,60 @@
         hint.classList.add('hidden');
       }, 500);
     }
+
+    // Easter egg: rip card after 10 flips
+    if (flipCount === 10) {
+      tearCard(container);
+    }
+  }
+
+  function tearCard(container) {
+    container.classList.add('torn');
+    const flipper = container.querySelector('.card-flipper');
+
+    // Create two halves
+    const leftHalf = document.createElement('div');
+    const rightHalf = document.createElement('div');
+
+    leftHalf.className = 'card-half card-half-left';
+    rightHalf.className = 'card-half card-half-right';
+
+    // Clone the card content for each half
+    leftHalf.innerHTML = flipper.innerHTML;
+    rightHalf.innerHTML = flipper.innerHTML;
+
+    // Hide original and add halves
+    flipper.style.opacity = '0';
+    container.appendChild(leftHalf);
+    container.appendChild(rightHalf);
+
+    // Animate the tear (slower)
+    setTimeout(() => {
+      leftHalf.style.transition = 'all 1.5s ease-out';
+      rightHalf.style.transition = 'all 1.5s ease-out';
+      leftHalf.style.transform = 'translateX(-150%) rotate(-25deg)';
+      leftHalf.style.opacity = '0';
+      rightHalf.style.transform = 'translateX(150%) rotate(25deg)';
+      rightHalf.style.opacity = '0';
+    }, 50);
+
+    // Repair after 5 seconds (give more time to see the torn state)
+    setTimeout(() => {
+      leftHalf.style.transition = 'all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      rightHalf.style.transition = 'all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      leftHalf.style.transform = 'translateX(0) rotate(0)';
+      leftHalf.style.opacity = '1';
+      rightHalf.style.transform = 'translateX(0) rotate(0)';
+      rightHalf.style.opacity = '1';
+
+      setTimeout(() => {
+        flipper.style.opacity = '1';
+        leftHalf.remove();
+        rightHalf.remove();
+        container.classList.remove('torn');
+        flipCount = 0;
+      }, 1200);
+    }, 5000);
   }
 
   // Hide hint on mobile after animation completes
@@ -669,6 +824,34 @@
       }
     }, 3500);
   }
+
+  // Pass dark mode preference to blog link
+  document.addEventListener('DOMContentLoaded', () => {
+    const blogLink = document.getElementById('blogLink');
+    if (blogLink) {
+      blogLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const darkMode = document.documentElement.classList.contains('dark');
+        window.location.href = blogLink.href + '?dark=' + (darkMode ? '1' : '0');
+      });
+    }
+
+    // Keyboard support for card flip
+    const cardContainer = document.querySelector('.card-container');
+    if (cardContainer) {
+      cardContainer.setAttribute('tabindex', '0');
+      cardContainer.setAttribute('role', 'button');
+      cardContainer.setAttribute('aria-label', 'Business card - Press Enter or Space to flip');
+
+      cardContainer.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          flipCard(cardContainer);
+        }
+      });
+    }
+  });
 </script>
 
 <div class="flip-hint" id="flipHint">Tap to flip</div>
@@ -687,7 +870,7 @@
 
       <div class="card-right">
         <div class="links">
-          <a href="https://blog.odoom.net/post/" class="link-item" onclick="event.stopPropagation()">
+          <a href="https://blog.odoom.net/post/" class="link-item" id="blogLink">
             <span class="link-icon">✍🏿</span>
             <span class="link-text">Blog</span>
             <span class="link-arrow">→</span>

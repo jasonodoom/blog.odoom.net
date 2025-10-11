@@ -35,15 +35,31 @@
     const setDark = (isDark) => {
       metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
       htmlClass[isDark ? 'add' : 'remove']('dark');
-      localStorage.setItem('dark', isDark);
+      localStorage.setItem('dark', isDark ? 'true' : 'false');
+      document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
     };
 
     // init - default to light mode
-    if (htmlClass.contains('dark')) {
+    // Check URL parameter first (for cross-domain navigation)
+    const urlParams = new URLSearchParams(window.location.search);
+    const darkParam = urlParams.get('dark');
+
+    if (darkParam === '1') {
+      setDark(true);
+    } else if (darkParam === '0') {
+      setDark(false);
+    } else if (htmlClass.contains('dark')) {
       setDark(true);
     } else {
       const darkVal = localStorage.getItem('dark');
       setDark(darkVal ? darkVal === 'true' : false);
+    }
+
+    // Clean up URL parameter
+    if (darkParam && window.history.replaceState) {
+      const url = new URL(window.location);
+      url.searchParams.delete('dark');
+      window.history.replaceState({}, '', url);
     }
 
     // manual switch
@@ -51,6 +67,16 @@
     btnDark.addEventListener('click', () => {
       setDark(localStorage.getItem('dark') !== 'true');
     });
+
+    // Pass dark mode preference to cross-domain home link
+    const homeLink = document.getElementById('homeLink');
+    if (homeLink) {
+      homeLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const darkMode = document.documentElement.classList.contains('dark');
+        window.location.href = homeLink.href + '?dark=' + (darkMode ? '1' : '0');
+      });
+    }
   </script>
 
   <div
@@ -63,6 +89,7 @@
       <a
         class="text-base font-normal home-link"
         href="https://odoom.net/"
+        id="homeLink"
         ><span class="home-icon">⌂</span> <span class="home-text">Home</span></a
       >
     </nav><!---->
