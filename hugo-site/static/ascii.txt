@@ -5,10 +5,10 @@
 ║                                                                  ║
 ║                 Engineer • Writer • Thinker                      ║
 ║                                                                  ║
-║  Building secure systems and exploring the intersection of       ║
-║  technology, privacy and society.                                ║
-║  Passionate about infrastructure security, code that matters     ║
-║  and digital freedom.                                            ║
+║  Building secure distributed systems. Exploring the              ║
+║  intersection of technology, privacy and digital freedom.        ║
+║  Passionate about security at every layer and code that matters. ║
+║                                                                  ║
 ║                                                                  ║
 ║  ──────────────────────────────────────────────────────────────  ║
 ║                                                                  ║
