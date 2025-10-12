@@ -11,8 +11,12 @@
     <p>
       <a href="https://keybase.io/jasonodoom" target="_blank" rel="noopener">68CC AF80 768A 91A5</a>
     </p>
-    <p style="font-size: 0.75rem; opacity: 0.6; margin-top: 1.5rem;">
-      Built with <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a> on {{ time.Format "Monday, 2 January 2006 at 3:04:05 PM MST" now }}
+    <p style="font-size: 0.75rem; opacity: 0.6; margin-top: 1.5rem; font-family: monospace;">
+      Built with <a href="https://nixos.org" target="_blank" rel="noopener">Nix</a> on {{ time.Format "Monday, 2 January 2006 at 3:04:05 PM MST" now }}
+      {{- if getenv "NIX_STORE_PATH" -}}
+      <br>
+      <span style="font-size: 0.65rem; opacity: 0.7;">{{ getenv "NIX_STORE_PATH" }}</span>
+      {{- end -}}
     </p>
   </div>
 

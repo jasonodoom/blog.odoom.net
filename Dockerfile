@@ -1,8 +1,18 @@
 # build stage
 FROM hugomods/hugo:exts AS builder
 
+ARG NIX_STORE_PATH
+ENV NIX_STORE_PATH=$NIX_STORE_PATH
+
 WORKDIR /app
 COPY hugo-site /app
+
+# Clone Paper theme if not already present
+RUN apk add --no-cache git && \
+    if [ ! -d "themes/paper/.git" ]; then \
+      git clone https://github.com/nanxiaobei/hugo-paper.git themes/paper; \
+    fi
+
 RUN hugo --minify
 
 # production stage
