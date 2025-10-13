@@ -41,6 +41,24 @@
       {
         packages.default = site;
 
+        apps.default = {
+          type = "app";
+          program = toString (pkgs.writeShellScript "serve" ''
+            # Build a local version with localhost baseURL
+            TMPDIR=$(mktemp -d)
+            cp -r ${./hugo-site}/* $TMPDIR/
+            mkdir -p $TMPDIR/themes/paper
+            cp -r ${paperTheme}/* $TMPDIR/themes/paper/
+            cd $TMPDIR
+            export NIX_STORE_PATH="${site}"
+            ${pkgs.hugo}/bin/hugo --baseURL "http://localhost:8000" --minify
+
+            echo "Serving blog.odoom.net locally on http://localhost:8000"
+            cd public
+            ${pkgs.python3}/bin/python -m http.server 8000
+          '');
+        };
+
         apps.deploy = {
           type = "app";
           program = toString (pkgs.writeShellScript "deploy" ''

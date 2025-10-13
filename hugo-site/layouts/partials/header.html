@@ -86,9 +86,10 @@
     <nav
       class="ml-12 flex flex-row items-center space-x-10 rtl:space-x-reverse"
     >
+      {{- /* Home link: localhost when running locally, odoom.net in production (cross-domain from blog.odoom.net) */ -}}
       <a
         class="text-base font-normal home-link"
-        href="https://odoom.net/"
+        href="{{ if strings.Contains .Site.BaseURL "localhost" }}{{ strings.TrimSuffix "/" .Site.BaseURL }}/{{ else }}https://odoom.net/{{ end }}"
         id="homeLink"
         ><span class="home-icon">⌂</span> <span class="home-text">Home</span></a
       >
