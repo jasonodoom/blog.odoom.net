@@ -47,8 +47,10 @@
             # Build a local version with localhost baseURL
             TMPDIR=$(mktemp -d)
             cp -r ${./hugo-site}/* $TMPDIR/
+            chmod -R u+w $TMPDIR
             mkdir -p $TMPDIR/themes/paper
             cp -r ${paperTheme}/* $TMPDIR/themes/paper/
+            chmod -R u+w $TMPDIR/themes/paper
             cd $TMPDIR
             export NIX_STORE_PATH="${site}"
             ${pkgs.hugo}/bin/hugo --baseURL "http://localhost:8000" --minify
