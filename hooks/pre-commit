@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Check for draft posts being committed
+DRAFTS=$(git diff --cached --name-only --diff-filter=ACM | grep 'hugo-site/content/post/.*\.md$' | while read file; do
+  if git show ":$file" | grep -q "^draft = true"; then
+    echo "$file"
+  fi
+done)
+
+if [ -n "$DRAFTS" ]; then
+  echo "Error: Attempting to commit draft posts:"
+  echo "$DRAFTS"
+  echo ""
+  echo "Please remove draft posts from staging or set draft = false"
+  exit 1
+fi
+
+exit 0

@@ -107,6 +107,13 @@
             echo "hugo version: $(hugo version)"
             echo ""
 
+            # Install pre-commit hook
+            if [ -f hooks/pre-commit ] && [ ! -f .git/hooks/pre-commit ]; then
+              echo "Installing pre-commit hook..."
+              cp hooks/pre-commit .git/hooks/pre-commit
+              chmod +x .git/hooks/pre-commit
+            fi
+
             # Clone Paper theme if not exists
             if [ ! -d "hugo-site/themes/paper/.git" ]; then
               echo "Cloning Paper theme..."
