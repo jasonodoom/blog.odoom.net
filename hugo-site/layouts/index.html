@@ -494,7 +494,12 @@
     pointer-events: none;
   }
 
-  @media (max-width: 768px) {
+  /* Mobile Flip Button - hidden by default */
+  .mobile-flip-btn {
+    display: none;
+  }
+
+  @media (max-width: 768px) and (orientation: portrait) {
     html, body {
       height: 100%;
       margin: 0;
@@ -507,7 +512,7 @@
     }
 
     main.prose {
-      padding: 5vh 1rem !important;
+      padding: 2vh 1rem !important;
       height: 100vh !important;
       width: 100% !important;
       max-width: 100% !important;
@@ -544,7 +549,7 @@
       width: 100%;
       position: relative;
       transform-origin: center center;
-      min-height: 550px;
+      min-height: 480px; /* Compact height */
     }
 
     .card-flipper::after {
@@ -555,16 +560,17 @@
 
     .business-card,
     .business-card-back {
-      padding: 2rem 1.5rem 3rem 1.5rem;
+      padding: 1.5rem 1.25rem 2.5rem 1.25rem; /* Reduced padding */
       border-radius: 16px;
-      min-height: 550px;
+      min-height: 480px; /* Compact height */
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06); /* Enhanced shadow */
+      border: 1px solid rgba(0,0,0,0.05); /* Subtle border */
       background-image:
         repeating-linear-gradient(
           0deg,
@@ -585,7 +591,8 @@
 
     .dark .business-card,
     .dark .business-card-back {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-color: rgba(255, 255, 255, 0.05);
       background-image:
         repeating-linear-gradient(
           0deg,
@@ -606,7 +613,7 @@
     .business-card {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 2rem;
+      gap: 1.5rem; /* Reduced gap */
     }
 
     .business-card-back {
@@ -614,15 +621,15 @@
     }
 
     .card-left {
-      padding-bottom: 1rem;
+      padding-bottom: 0.5rem;
     }
 
     .card-right {
       border-left: none;
       border-top: 1px solid rgba(0, 0, 0, 0.1);
       padding-left: 0;
-      padding-top: 2rem;
-      padding-bottom: 2rem;
+      padding-top: 1.5rem; /* Reduced padding */
+      padding-bottom: 1.5rem;
     }
 
     .dark .card-right {
@@ -630,18 +637,18 @@
     }
 
     .business-card h1 {
-      font-size: 1.75rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.6rem; /* Slightly smaller */
+      margin-bottom: 0.25rem;
     }
 
     .tagline {
-      font-size: 0.875rem;
-      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
     }
 
     .bio {
-      font-size: 0.9rem;
-      line-height: 1.6;
+      font-size: 0.85rem; /* Compact text */
+      line-height: 1.5;
     }
 
     .bio p {
@@ -649,16 +656,16 @@
     }
 
     .links {
-      gap: 0.875rem;
+      gap: 0.75rem;
     }
 
     .link-item {
-      font-size: 0.9rem;
-      padding: 0.75rem 1rem;
+      font-size: 0.85rem;
+      padding: 0.6rem 0.8rem;
     }
 
     .link-icon {
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
     .card-motto {
@@ -681,6 +688,28 @@
     .card-back-pgp {
       font-size: 0.875rem;
       letter-spacing: 0.1em;
+    }
+
+    /* Mobile Flip Button */
+    .mobile-flip-btn {
+      display: block;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.75rem;
+      color: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 0.3rem 0.6rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 10;
+    }
+
+    .dark .mobile-flip-btn {
+      color: rgba(255, 255, 255, 0.5);
+      border-color: rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.3);
     }
 
     /* Tap to flip hint on mobile */
@@ -714,6 +743,107 @@
 
     .flip-hint.hidden {
       display: none;
+    }
+  }
+
+  /* Mobile Landscape optimizations */
+  @media (orientation: landscape) and (max-height: 600px) {
+    main.prose {
+      padding: 0 !important;
+      min-height: 100vh !important;
+      height: 100vh !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+    }
+
+    .card-container {
+      width: auto !important;
+      height: 85vh !important;
+      max-width: none !important;
+      aspect-ratio: 1.75 / 1;
+      margin: 0 auto;
+    }
+
+    .card-flipper {
+      min-height: 0 !important; /* Override any defaults */
+    }
+
+    .business-card,
+    .business-card-back {
+      position: absolute;
+      min-height: 0 !important;
+      padding: 1.5rem !important;
+      gap: 1.5rem !important;
+      display: grid;
+      grid-template-columns: 1.618fr 1fr; /* Force horizontal layout */
+    }
+
+    /* Ensure back is centered */
+    .business-card-back {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-right {
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+      border-top: none;
+      padding-left: 1.5rem;
+      padding-top: 0;
+      padding-bottom: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .dark .card-right {
+      border-left-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .business-card h1 {
+      font-size: 1.4rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .tagline {
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .bio {
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .links {
+      gap: 0.5rem;
+    }
+
+    .link-item {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.75rem;
+    }
+
+    .card-motto {
+      bottom: 0.5rem;
+      font-size: 0.4rem;
+    }
+
+    /* Show flip hint */
+    .flip-hint {
+      display: block;
+      bottom: 0.5rem;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.8rem;
+    }
+
+    .dark-mode-toggle {
+      top: 0.5rem;
+      right: 0.5rem;
+      transform: scale(0.8);
     }
   }
 </style>
@@ -750,6 +880,27 @@
     }
 
     container.classList.toggle('flipped');
+    const isFlipped = container.classList.contains('flipped');
+    container.setAttribute('aria-expanded', isFlipped);
+    
+    // Update accessibility states
+    const front = container.querySelector('.business-card');
+    const back = container.querySelector('.business-card-back');
+    
+    if (isFlipped) {
+        front.setAttribute('aria-hidden', 'true');
+        back.setAttribute('aria-hidden', 'false');
+        // Disable front links, enable back links
+        front.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '-1'));
+        back.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '0'));
+    } else {
+        front.setAttribute('aria-hidden', 'false');
+        back.setAttribute('aria-hidden', 'true');
+        // Enable front links, disable back links
+        front.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '0'));
+        back.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '-1'));
+    }
+
     flipCount++;
 
     // Hide hint after first flip
@@ -842,7 +993,16 @@
     if (cardContainer) {
       cardContainer.setAttribute('tabindex', '0');
       cardContainer.setAttribute('role', 'button');
+      cardContainer.setAttribute('aria-expanded', 'false');
       cardContainer.setAttribute('aria-label', 'Business card - Press Enter or Space to flip');
+
+      // Initialize state
+      const front = cardContainer.querySelector('.business-card');
+      const back = cardContainer.querySelector('.business-card-back');
+      
+      front.setAttribute('aria-hidden', 'false');
+      back.setAttribute('aria-hidden', 'true');
+      back.querySelectorAll('a').forEach(a => a.setAttribute('tabindex', '-1'));
 
       cardContainer.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -884,6 +1044,11 @@
       </div>
 
       <div class="card-motto">Create. Dismantle. Rebuild.</div>
+      
+      <!-- Mobile Flip Button -->
+      <div class="mobile-flip-btn" onclick="event.stopPropagation(); flipCard(this.closest('.card-container'))">
+        <span>Flip Card ⟳</span>
+      </div>
     </div>
 
     <!-- Back of card -->

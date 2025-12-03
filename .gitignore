@@ -6,6 +6,7 @@ exports/
 hugo-site/public/
 hugo-site/resources/
 hugo-site/.hugo_build.lock
+hugo-site/static/pagefind/
 
 # Nix
 result

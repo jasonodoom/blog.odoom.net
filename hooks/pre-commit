@@ -1,18 +1,127 @@
 #!/usr/bin/env bash
 
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+HAS_ERRORS=0
+
+echo "Running pre-commit checks for blog posts..."
+
+# Get all markdown files in hugo-site/content/post/ that are staged
+STAGED_POSTS=$(git diff --cached --name-only --diff-filter=ACM | grep 'hugo-site/content/post/.*\.md$' || true)
+
+if [ -z "$STAGED_POSTS" ]; then
+  echo -e "${GREEN}✓${NC} No blog posts to validate"
+  exit 0
+fi
+
 # Check for draft posts being committed
-DRAFTS=$(git diff --cached --name-only --diff-filter=ACM | grep 'hugo-site/content/post/.*\.md$' | while read file; do
-  if git show ":$file" | grep -q "^draft = true"; then
+echo ""
+echo "Checking for draft posts..."
+DRAFTS=$(echo "$STAGED_POSTS" | while read file; do
+  if [ -f "$file" ] && git show ":$file" | grep -q "^draft = true"; then
     echo "$file"
   fi
 done)
 
 if [ -n "$DRAFTS" ]; then
-  echo "Error: Attempting to commit draft posts:"
+  echo -e "${RED}✗${NC} Error: Attempting to commit draft posts:"
   echo "$DRAFTS"
   echo ""
   echo "Please remove draft posts from staging or set draft = false"
   exit 1
+fi
+
+# Validate non-draft posts (posts being made public)
+echo -e "${GREEN}✓${NC} No draft posts detected"
+echo ""
+echo "Validating non-draft posts for markdown structure and spelling..."
+
+for file in $STAGED_POSTS; do
+  if [ ! -f "$file" ]; then
+    continue
+  fi
+
+  echo ""
+  echo "Checking: $file"
+
+  # Check if markdownlint-cli is available
+  if command -v markdownlint &> /dev/null; then
+    if ! markdownlint -c /dev/null \
+      --disable MD013 \
+      --disable MD041 \
+      --disable MD033 \
+      --disable MD034 \
+      "$file" 2>&1; then
+      echo -e "${YELLOW}⚠${NC} Markdown linting found issues in $file"
+      echo "Run: markdownlint --fix $file"
+      HAS_ERRORS=1
+    else
+      echo -e "${GREEN}✓${NC} Markdown structure valid"
+    fi
+  else
+    echo -e "${YELLOW}⚠${NC} markdownlint-cli not found, skipping markdown validation"
+  fi
+
+  # Check spelling with aspell
+  if command -v aspell &> /dev/null; then
+    # Extract only the content (skip frontmatter)
+    CONTENT=$(awk '/^\+\+\+$/,/^\+\+\+$/ {if (!/^\+\+\+$/) next} /^\+\+\+$/ {p++; next} p==2' "$file")
+
+    if [ -n "$CONTENT" ]; then
+      # Create temp file for spell checking
+      TEMP_FILE=$(mktemp)
+      echo "$CONTENT" > "$TEMP_FILE"
+
+      # Run aspell and capture misspellings (use personal word list if available)
+      ASPELL_OPTS="list --mode=markdown --lang=en"
+      if [ -f .aspell.en.pws ]; then
+        ASPELL_OPTS="$ASPELL_OPTS --personal=./.aspell.en.pws"
+      fi
+      MISSPELLINGS=$(cat "$TEMP_FILE" | aspell $ASPELL_OPTS | sort -u)
+      rm "$TEMP_FILE"
+
+      if [ -n "$MISSPELLINGS" ]; then
+        echo -e "${YELLOW}⚠${NC} Potential spelling issues found:"
+        echo "$MISSPELLINGS" | head -10
+        echo ""
+        echo "Review these words. Add correct technical terms to .aspell.en.pws if needed"
+        # Note: Not failing on spelling issues, just warning
+      else
+        echo -e "${GREEN}✓${NC} No spelling issues detected"
+      fi
+    fi
+  else
+    echo -e "${YELLOW}⚠${NC} aspell not found, skipping spell check"
+  fi
+done
+
+echo ""
+if [ $HAS_ERRORS -eq 1 ]; then
+  echo -e "${RED}✗${NC} Pre-commit validation failed. Please fix the issues above."
+  exit 1
+fi
+
+echo -e "${GREEN}✓${NC} All pre-commit checks passed!"
+
+# Update word list after successful validation of non-draft posts
+if [ -f scripts/update-wordlist.sh ]; then
+  echo ""
+  echo "Updating spell check word list with words from newly published post(s)..."
+  bash scripts/update-wordlist.sh
+
+  # Add the updated word list to the commit if it changed
+  if git diff --quiet .aspell.en.pws 2>/dev/null; then
+    echo "   No new words added to dictionary"
+  else
+    git add .aspell.en.pws
+    echo -e "${GREEN}✓${NC} Updated word list added to commit"
+  fi
 fi
 
 exit 0

@@ -24,13 +24,14 @@
           name = "blog-odoom-net";
           src = ./hugo-site;
 
-          buildInputs = [ pkgs.hugo ];
+          buildInputs = [ pkgs.hugo pkgs.pagefind ];
 
           buildPhase = ''
             mkdir -p themes/paper
             cp -r ${paperTheme}/* themes/paper/
             export NIX_STORE_PATH="$out"
             hugo --minify
+            pagefind --site public
           '';
 
           installPhase = ''
@@ -54,6 +55,7 @@
             cd $TMPDIR
             export NIX_STORE_PATH="${site}"
             ${pkgs.hugo}/bin/hugo --baseURL "http://localhost:8000" --minify
+            ${pkgs.pagefind}/bin/pagefind --site public
 
             echo "Serving blog.odoom.net locally on http://localhost:8000"
             cd public
@@ -98,14 +100,29 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             hugo
+            pagefind
             go
             flyctl
+            # Markdown linting and validation
+            markdownlint-cli
+            # Spell checking
+            aspell
+            aspellDicts.en
           ];
 
           shellHook = ''
             echo "Hugo dev environment"
             echo "hugo version: $(hugo version)"
+            echo "pagefind version: $(pagefind --version)"
             echo ""
+
+            # Update aspell word list from existing posts
+            if [ -f scripts/update-wordlist.sh ]; then
+              if [ ! -f .aspell.en.pws ] || [ hugo-site/content/post -nt .aspell.en.pws ]; then
+                echo "Updating spell check word list..."
+                bash scripts/update-wordlist.sh
+              fi
+            fi
 
             # Install pre-commit hook
             if [ -f hooks/pre-commit ] && [ ! -f .git/hooks/pre-commit ]; then
@@ -121,8 +138,17 @@
               git clone https://github.com/nanxiaobei/hugo-paper.git hugo-site/themes/paper
             fi
 
+            echo "Building site and generating Pagefind index..."
+            cd hugo-site
+            hugo
+            pagefind --site public
+            
+            echo "Copying Pagefind index to static/ for dev server..."
+            mkdir -p static/pagefind
+            cp -r public/pagefind/* static/pagefind/
+
             echo "Starting Hugo server..."
-            cd hugo-site && hugo server
+            hugo server
           '';
         };
       }

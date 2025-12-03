@@ -9,6 +9,9 @@ theme = "paper"
   description = "Technical and untechnical musings"
   favicon = "favicon.svg"
 
+[outputs]
+  home = ["HTML", "RSS"]
+
 [security]
   [security.funcs]
     getenv = ['^HUGO_', '^CI', '^NIX_STORE_PATH$']
