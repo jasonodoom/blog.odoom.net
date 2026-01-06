@@ -276,8 +276,9 @@ section:hover h2 {
 .search-input-wrapper {
   position: relative;
   width: 90%;
-  max-width: 600px;
+  max-width: 800px;
   margin-bottom: 2rem;
+  box-sizing: border-box;
 }
 
 .search-input {
@@ -318,10 +319,12 @@ section:hover h2 {
 
 .search-results {
   width: 90%;
-  max-width: 600px;
+  max-width: 800px;
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 70vh;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 .search-result-item {
@@ -332,6 +335,9 @@ section:hover h2 {
   text-decoration: none;
   transition: background 0.2s ease;
   border: 1px solid transparent;
+  overflow: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .search-result-item:hover {
@@ -361,6 +367,8 @@ section:hover h2 {
   color: #666;
   display: block;
   line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .search-result-date mark {
