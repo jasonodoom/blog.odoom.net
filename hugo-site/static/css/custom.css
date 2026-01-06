@@ -472,6 +472,7 @@ section:hover h2 {
     background: rgba(0,0,0,0.02);
     max-width: 100%;
     box-sizing: border-box;
+    overflow: visible;
   }
 
   .dark .search-result-item {
@@ -481,11 +482,15 @@ section:hover h2 {
   .search-result-title {
     font-size: 1.1rem;
     word-break: break-word;
+    white-space: normal;
   }
 
   .search-result-date {
     font-size: 0.8rem;
     line-height: 1.5;
     word-break: break-word;
+    white-space: normal;
+    display: block;
+    width: 100%;
   }
 }
