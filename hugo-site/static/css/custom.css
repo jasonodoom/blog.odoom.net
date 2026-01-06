@@ -262,6 +262,8 @@ section:hover h2 {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .dark .search-overlay {
@@ -415,6 +417,10 @@ section:hover h2 {
   .search-overlay {
     padding-top: 1rem;
     background: #fff;
+    width: 100vw;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
 
   .dark .search-overlay {
@@ -432,26 +438,35 @@ section:hover h2 {
 
   .search-input-wrapper {
     width: 100%;
-    padding: 0 1.5rem;
+    padding: 0 1rem;
     margin-top: 3rem;
     margin-bottom: 1rem;
+    box-sizing: border-box;
+    max-width: 100%;
   }
 
   .search-input {
     font-size: 1.25rem;
     padding: 0.75rem 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .search-results {
     width: 100%;
     padding: 0 1rem;
     max-height: calc(100vh - 140px);
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
   .search-result-item {
     padding: 1rem;
     margin-bottom: 0.5rem;
     background: rgba(0,0,0,0.02);
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .dark .search-result-item {
@@ -460,5 +475,10 @@ section:hover h2 {
 
   .search-result-title {
     font-size: 1.1rem;
+  }
+
+  .search-result-date {
+    font-size: 0.8rem;
+    line-height: 1.5;
   }
 }
