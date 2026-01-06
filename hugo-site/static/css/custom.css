@@ -343,7 +343,6 @@ section:hover h2 {
   text-decoration: none;
   transition: background 0.2s ease;
   border: 1px solid transparent;
-  overflow: hidden;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
