@@ -504,6 +504,8 @@
       height: 100%;
       margin: 0;
       padding: 0;
+      max-width: 100vw;
+      overflow-x: hidden;
     }
 
     body {
@@ -543,13 +545,16 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     .card-flipper {
       width: 100%;
+      max-width: 100%;
       position: relative;
       transform-origin: center center;
       min-height: 480px; /* Compact height */
+      box-sizing: border-box;
     }
 
     .card-flipper::after {
@@ -571,6 +576,8 @@
       flex-direction: column;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06); /* Enhanced shadow */
       border: 1px solid rgba(0,0,0,0.05); /* Subtle border */
+      box-sizing: border-box;
+      overflow: hidden;
       background-image:
         repeating-linear-gradient(
           0deg,
@@ -649,6 +656,7 @@
     .bio {
       font-size: 0.85rem; /* Compact text */
       line-height: 1.5;
+      word-break: break-word;
     }
 
     .bio p {
