@@ -488,9 +488,11 @@ section:hover h2 {
   .search-result-date {
     font-size: 0.8rem;
     line-height: 1.5;
-    word-break: break-word;
-    white-space: normal;
-    display: block;
-    width: 100%;
+    word-break: break-word !important;
+    white-space: normal !important;
+    display: block !important;
+    width: 100% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
   }
 }
